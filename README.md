@@ -1,28 +1,49 @@
-This project was generated from [create.xyz](https://create.xyz/).
+このReactコンポーネントは、個人のポートフォリオサイトを構築するためのものです。主に以下のセクションで構成されています。
 
-It is a [Next.js](https://nextjs.org/) project built on React and TailwindCSS.
+### 1. **全体のテーマとデザイン**
+- サイト全体がダークモードとライトモードの切り替えが可能で、背景にはグラデーションが使用されています。
+- テキストは全体的に白色で表示され、さまざまなアニメーション効果（フェードイン、スライドイン、スケールアップなど）を使用して視覚的に魅力的にしています。
+- `font-sans`を使用して、読みやすいサンセリフのフォントを採用しています。
 
-## Getting Started
+### 2. **ヘッダー**
+- 固定されたヘッダーには、サイトのタイトル（「Toshiki Sakuta」）とナビゲーションメニューが表示されます。
+- ヘッダーの右側には、ダークモードの切り替えボタン（太陽/月アイコン）と言語切り替えボタン（英語/日本語）が配置されています。
+- 小さな画面では、ナビゲーションメニューは隠され、ハンバーガーメニューとして表示されます。メニューを開くと、リンクが縦にリスト表示されます。
 
-First, run the development server:
+### 3. **メインセクション**
+- **Homeセクション**:
+  - 「Welcome to My World」というウェルカムメッセージが中央に表示され、名前（Toshiki Sakuta）とともに紹介されています。
+  - LinkedIn、GitHub、Qiitaのソーシャルメディアリンクがアイコンとして表示されます。
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Aboutセクション**:
+  - 自己紹介セクションで、著者のキャリアの概要が説明されています。技術的なバックグラウンドや、過去にどのような仕事に携わってきたかが記述されています。
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Projectsセクション**:
+  - 主なプロジェクトの紹介が表示されます。各プロジェクトは、クリック可能なカードとして表示され、それぞれのプロジェクトに関する概要と詳細ページへのリンクが含まれています。
 
-You can start editing the code in `src`. The page auto-updates as you edit the file.
+- **Contactセクション**:
+  - 名前、メールアドレス、メッセージを入力するための連絡フォームが用意されています。フォームにはスタイリッシュなテキストボックスと送信ボタンが含まれています。
 
-To learn more, take a look at the following resources:
+### 4. **フッター**
+- **クイックリンク**:
+  - 各セクションへのクイックアクセスリンクが表示されます。
+  
+- **ソーシャルメディア**:
+  - Facebook、Twitter、Instagramへのリンクがアイコンとして表示されます。
 
-- [React Documentation](https://react.dev/) - learn about React
-- [TailwindCSS Documentation](https://tailwindcss.com/) - learn about TailwindCSS
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.# ToshikiSakutaWeb
+- **ニュースレターの購読**:
+  - メールアドレスを入力してニュースレターに登録するためのフォームが含まれています。
+
+- **連絡先情報**:
+  - 東京の住所、電話番号、メールアドレスが表示され、ユーザーが簡単に連絡を取れるようにしています。
+
+### 5. **言語切り替え**
+- サイトは英語と日本語の2つの言語で表示することができ、ボタンをクリックすることでリアルタイムに言語を切り替えることができます。
+
+### 6. **ダークモード切り替え**
+- サイト全体の配色をライトモードとダークモードで切り替えることができ、ユーザーの好みに合わせて表示を変更できます。
+
+### 7. **アニメーションとスタイル**
+- アニメーションが多数使用されており、視覚的なエンゲージメントを高めています。特に、フェードインやスライドアップ、ホバーステートでのスケールアップなどのエフェクトが施されています。
+
+このサイトは、個人のブランディングを目的としており、クリエイティブなポートフォリオを魅力的かつ機能的に表現するために設計されています。訪問者が著者の技術スキルやプロジェクトに簡単にアクセスし、連絡を取ることができるように工夫されています。
