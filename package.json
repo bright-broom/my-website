@@ -1,12 +1,11 @@
 {
-  "name": "create-project",
+  "name": "toshiki-sakuta-web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
     "check:design": "node scripts/check-design.mjs",
     "test:visual": "playwright test",
     "test:visual:baseline": "playwright test --update-snapshots=all"
@@ -18,9 +17,7 @@
     "@fortawesome/react-fontawesome": "^0.2.2",
     "next": "14.0.4",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-icons": "^5.3.0",
-    "react-scripts": "^5.0.1"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
