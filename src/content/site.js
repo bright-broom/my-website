@@ -3,7 +3,6 @@ export const navItems = ['about', 'works', 'contact'];
 export const profileLinks = [
   { name: 'LinkedIn', icon: 'linkedin', href: 'https://www.linkedin.com/in/toshikisakuta/' },
   { name: 'GitHub', icon: 'github', href: 'https://github.com/bright-broom' },
-  { name: 'Qiita', icon: 'qiita', href: 'https://qiita.com/KoenigWolf' },
 ];
 
 export const translations = {
