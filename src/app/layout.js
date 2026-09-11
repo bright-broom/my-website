@@ -14,7 +14,7 @@ const themeScript = `try{var t=localStorage.getItem('theme');if(t!=='light'&&t!=
 
 export const metadata = {
   title: 'Toshiki Sakuta',
-  description: 'Cloud & Security Engineer based in Osaka, Japan.',
+  description: 'Cloud & Security Engineer based in Tokyo, Japan.',
   robots: {
     index: false,
     follow: false,

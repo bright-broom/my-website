@@ -1,27 +1,23 @@
 import { Button, Card, Input, Reveal, Section, TextLink, Textarea } from '@/components/ui';
-import { contactDetails } from '@/content/site';
+import { profileLinks } from '@/content/site';
 import { SectionIntro } from './SectionIntro';
 
 export function Contact({ t }) {
   const { contact } = t;
   const details = [
-    {
-      label: contact.emailLabel,
-      value: (
-        <TextLink variant="inline" href={`mailto:${contactDetails.email}`}>
-          {contactDetails.email}
-        </TextLink>
-      ),
-    },
-    {
-      label: contact.phoneLabel,
-      value: (
-        <TextLink variant="inline" href={`tel:${contactDetails.phone.replace(/[^+\d]/g, '')}`}>
-          {contactDetails.phone}
-        </TextLink>
-      ),
-    },
     { label: contact.locationLabel, value: contact.location },
+    {
+      label: contact.linksLabel,
+      value: (
+        <span className="flex flex-wrap gap-x-5 gap-y-1">
+          {profileLinks.map((link) => (
+            <TextLink key={link.icon} variant="inline" href={link.href} target="_blank" rel="noopener noreferrer">
+              {link.name}
+            </TextLink>
+          ))}
+        </span>
+      ),
+    },
   ];
 
   return (

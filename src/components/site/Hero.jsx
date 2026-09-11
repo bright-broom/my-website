@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { Button, Container, Eyebrow, Heading, IconLink } from '@/components/ui';
-import { contactDetails, profileLinks } from '@/content/site';
+import { profileLinks } from '@/content/site';
 import { profileIcons } from './icons';
 
 function Terminal({ t }) {
@@ -9,7 +9,6 @@ function Terminal({ t }) {
     ['whoami', 'toshiki-sakuta'],
     ['cat focus.txt', 'cloud / network / security'],
     ['echo $LOCATION', t.contact.location],
-    ['mail', contactDetails.email],
   ];
 
   return (

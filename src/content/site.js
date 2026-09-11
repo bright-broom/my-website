@@ -6,11 +6,6 @@ export const profileLinks = [
   { name: 'Qiita', icon: 'qiita', href: 'https://qiita.com/KoenigWolf' },
 ];
 
-export const contactDetails = {
-  email: '',
-  phone: '',
-};
-
 export const translations = {
   en: {
     nav: { about: 'About', works: 'Works', contact: 'Contact' },
@@ -18,7 +13,7 @@ export const translations = {
     toggleTheme: 'Toggle color theme',
     toggleMenu: 'Toggle menu',
     hero: {
-      eyebrow: 'Cloud & Security Engineer · Osaka, Japan',
+      eyebrow: 'Cloud & Security Engineer · Tokyo, Japan',
       name: 'Toshiki Sakuta',
       lead: 'I build and secure infrastructure — from Azure cloud environments and networks to vulnerability assessment through log analysis.',
       primaryAction: 'View works',
@@ -67,10 +62,9 @@ export const translations = {
       eyebrow: '03 / Contact',
       heading: 'Get in touch',
       lead: 'For work inquiries, collaborations, or just to say hello — feel free to reach out.',
-      emailLabel: 'Email',
-      phoneLabel: 'Phone',
       locationLabel: 'Location',
-      location: 'Osaka, Japan',
+      location: 'Tokyo, Japan',
+      linksLabel: 'Links',
       form: {
         name: 'Name',
         email: 'Email',
@@ -89,7 +83,7 @@ export const translations = {
     toggleTheme: 'カラーテーマを切り替える',
     toggleMenu: 'メニューを開閉する',
     hero: {
-      eyebrow: 'クラウド & セキュリティエンジニア · 大阪',
+      eyebrow: 'クラウド & セキュリティエンジニア · 東京',
       name: '作田 敏希',
       lead: 'Azure を中心としたクラウド環境やネットワークの構築から、ログ分析による脆弱性診断まで。インフラをつくり、守るエンジニアです。',
       primaryAction: '実績を見る',
@@ -138,10 +132,9 @@ export const translations = {
       eyebrow: '03 / Contact',
       heading: 'お問い合わせ',
       lead: 'お仕事のご相談など、お気軽にご連絡ください。',
-      emailLabel: 'メール',
-      phoneLabel: '電話',
       locationLabel: '所在地',
-      location: '大阪府大阪市',
+      location: '東京都',
+      linksLabel: 'リンク',
       form: {
         name: 'お名前',
         email: 'メールアドレス',
