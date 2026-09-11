@@ -1,4 +1,4 @@
-import { Button, Card, Input, Reveal, Section, TextLink, Textarea } from '@/components/ui';
+import { Button, Card, Eyebrow, Input, Reveal, Section, TextLink, Textarea } from '@/components/ui';
 import { profileLinks } from '@/content/site';
 import { SectionIntro } from './SectionIntro';
 
@@ -30,7 +30,7 @@ export function Contact({ t }) {
           <dl className="mt-10 space-y-5">
             {details.map(({ label, value }) => (
               <div key={label}>
-                <dt className="font-mono text-label uppercase text-fg-subtle">{label}</dt>
+                <Eyebrow as="dt">{label}</Eyebrow>
                 <dd className="mt-1 text-fg">{value}</dd>
               </div>
             ))}
