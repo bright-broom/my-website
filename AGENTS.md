@@ -16,6 +16,8 @@
 | `npm run dev` | 開発サーバー（http://localhost:3000） |
 | `npm run build` | 本番ビルド（開発サーバーと同時に実行しない。どちらも `.next` を使うため） |
 | `npm run check:design` | デザインシステム・プライバシー・多言語・検索除外のルール検査 |
+| `npm run test:visual:baseline` | 見た目の基準画像を撮る（8 通り＋モバイルメニュー。変更前のコードで実行） |
+| `npm run test:visual` | 基準画像と 1 ピクセル単位で比較する（本番ビルドをポート 3100 で起動するので、開発サーバーは止めておく） |
 
 ## ファイル構成
 
@@ -28,6 +30,7 @@ src/components/ui/         見た目のルールを持つ汎用部品（プリ�
 src/components/site/       ページのセクション（プリミティブを組み合わせるだけ）
 src/content/site.js        すべての文言とリンク（en / ja）
 scripts/check-design.mjs   ルールの自動検査
+tests/visual/              見た目の比較テスト（Playwright）。基準画像は端末ごとに撮るので Git 管理しない
 DESIGN.md                  デザインガイド（トークン・部品・判断基準）
 ```
 
@@ -57,8 +60,9 @@ UI に関わる変更は、次をすべて満たして完了とする。
 
 1. `npm run check:design` が通る
 2. `npm run build` が通る
-3. 幅 390px と 1440px × ライトとダーク × 英語と日本語の 8 通りで、表示崩れと横スクロールがないことを確認した
-4. DESIGN.md §19 のチェックリストを満たす
+3. 見た目を変えない変更（リファクタリング、ライブラリの更新など）: 変更前のコードで `npm run test:visual:baseline`、変更後に `npm run test:visual` を実行し、差分がゼロである
+4. 見た目を変える変更: 幅 390px と 1440px × ライトとダーク × 英語と日本語の 8 通りで、意図した変化だけであること、表示崩れと横スクロールがないことを確認した（`npm run test:visual` の差分画像 `playwright-report/` が使える）
+5. DESIGN.md §19 のチェックリストを満たす
 
 確認できなかった項目があれば、完了報告でそう明記する。
 
