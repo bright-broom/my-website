@@ -1,9 +1,10 @@
+import type { SiteProps } from '@/content/site';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { Card, Heading, Reveal, Section } from '@/components/ui';
 import { SectionIntro } from './SectionIntro';
 
-export function Works({ t }) {
+export function Works({ t }: SiteProps) {
   const { works } = t;
 
   return (

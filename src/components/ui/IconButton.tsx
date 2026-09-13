@@ -1,7 +1,8 @@
+import type { ComponentPropsWithoutRef } from 'react';
 import { cn } from '@/lib/cn';
 import { focusRing } from './Button';
 
-export function IconButton({ className, ...props }) {
+export function IconButton({ className, ...props }: ComponentPropsWithoutRef<'button'>) {
   return (
     <button
       type="button"

@@ -2,9 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Preserve the original fallback metrics across next/font upgrades, including arrow glyphs. */
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Arial');
+  ascent-override: 90.20%;
+  descent-override: 22.48%;
+  line-gap-override: 0%;
+  size-adjust: 107.40%;
+}
+
+@font-face {
+  font-family: 'Noto Sans JP Fallback';
+  src: local('Arial');
+  ascent-override: 110.35%;
+  descent-override: 27.40%;
+  line-gap-override: 0%;
+  size-adjust: 105.12%;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono Fallback';
+  src: local('Arial');
+  ascent-override: 75.04%;
+  descent-override: 22.07%;
+  line-gap-override: 0%;
+  size-adjust: 135.93%;
+}
+
 /*
  * Design tokens — the single source of truth for color.
- * tailwind.config.js maps these variables to utilities (bg-surface, text-fg-muted, border-border, ...)
+ * tailwind.config.ts maps these variables to utilities (bg-surface, text-fg-muted, border-border, ...)
  * and holds the type scale, radii, shadows and motion; components use only those utilities.
  * Colors are space-separated RGB channels so opacity modifiers work (bg-bg/80).
  */

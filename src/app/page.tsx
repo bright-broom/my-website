@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { useEffect, useState } from 'react';
 import { Header } from '@/components/site/Header';
 import { Hero } from '@/components/site/Hero';
@@ -6,9 +6,9 @@ import { About } from '@/components/site/About';
 import { Works } from '@/components/site/Works';
 import { Contact } from '@/components/site/Contact';
 import { Footer } from '@/components/site/Footer';
-import { translations } from '@/content/site';
+import { translations, type Language, type Theme } from '@/content/site';
 
-function readStorage(key) {
+function readStorage(key: string) {
   try {
     return localStorage.getItem(key);
   } catch {
@@ -16,15 +16,15 @@ function readStorage(key) {
   }
 }
 
-function writeStorage(key, value) {
+function writeStorage(key: string, value: string) {
   try {
     localStorage.setItem(key, value);
   } catch {}
 }
 
 export default function MainComponent() {
-  const [theme, setTheme] = useState('light');
-  const [language, setLanguage] = useState('en');
+  const [theme, setTheme] = useState<Theme>('light');
+  const [language, setLanguage] = useState<Language>('en');
   const t = translations[language];
 
   useEffect(() => {
