@@ -1,6 +1,7 @@
+import type { ComponentPropsWithoutRef } from 'react';
 import { cn } from '@/lib/cn';
 
-export function Tag({ className, ...props }) {
+export function Tag({ className, ...props }: ComponentPropsWithoutRef<'span'>) {
   return (
     <span
       className={cn(

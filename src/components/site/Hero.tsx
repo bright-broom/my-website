@@ -1,10 +1,11 @@
+import type { SiteProps } from '@/content/site';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { Button, Container, Eyebrow, Heading, IconLink } from '@/components/ui';
 import { profileLinks } from '@/content/site';
 import { profileIcons } from './icons';
 
-function Terminal({ t }) {
+function Terminal({ t }: SiteProps) {
   const lines = [
     ['whoami', 'toshiki-sakuta'],
     ['cat focus.txt', 'cloud / network / security'],
@@ -33,7 +34,7 @@ function Terminal({ t }) {
   );
 }
 
-export function Hero({ t }) {
+export function Hero({ t }: SiteProps) {
   return (
     <section id="home" className="pb-24 pt-36 md:pb-32 md:pt-48">
       <Container className="grid items-end gap-16 lg:grid-cols-12">

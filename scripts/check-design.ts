@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env -S npx tsx
 /**
  * Design system guardrails.
  *
@@ -12,15 +12,26 @@
  */
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
+import { translations } from '../src/content/site';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
+const read = (file: string) => fs.readFileSync(path.join(root, file), 'utf8');
 
-const violations = [];
-const report = (file, line, rule, message) => violations.push({ file, line, rule, message });
+type Violation = { file: string; line: number; rule: string; message: string };
+type Rule = {
+  id: string;
+  pattern: RegExp;
+  message: string;
+  skip?: (file: string) => boolean;
+  test?: (match: RegExpMatchArray) => boolean;
+};
+
+const violations: Violation[] = [];
+const report = (file: string, line: number, rule: string, message: string): void => {
+  violations.push({ file, line, rule, message });
+};
 
 // ---------------------------------------------------------------------------
 // Files
@@ -33,7 +44,7 @@ function listFiles() {
       .filter(Boolean)
       .filter((file) => fs.existsSync(path.join(root, file)));
   } catch {
-    const walk = (dir) =>
+    const walk = (dir: string): string[] =>
       fs.readdirSync(path.join(root, dir), { withFileTypes: true }).flatMap((entry) => {
         const child = path.join(dir, entry.name);
         if (['node_modules', '.next', '.git'].includes(entry.name)) return [];
@@ -44,26 +55,49 @@ function listFiles() {
 }
 
 const allFiles = listFiles();
+for (const file of allFiles) {
+  if (/\.(?:[cm]?js|jsx)$/.test(file)) {
+    report(file, 0, 'source/typescript', '実行コードは TypeScript、データだけの設定は JSON にする');
+  }
+}
 const sourceFiles = allFiles.filter((file) => /^src\/.*\.(jsx?|tsx?)$/.test(file));
 const textFiles = allFiles.filter(
   (file) =>
     !/(^|\/)package-lock\.json$/.test(file) &&
-    file !== 'scripts/check-design.mjs' &&
+    file !== 'scripts/check-design.ts' &&
     /\.(jsx?|tsx?|mjs|cjs|json|md|mdx|css|html|ya?ml|txt|svg)$/.test(file),
 );
 
 // ---------------------------------------------------------------------------
-// Line rules for component source (src/**/*.js[x])
+// Line rules for component source (src/**/*.ts[x])
 // ---------------------------------------------------------------------------
 
 const PALETTE =
   'slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose';
 const COLOR_UTILS =
   'bg|text|border(?:-[trblxyse])?|ring|ring-offset|outline|fill|stroke|from|via|to|shadow|decoration|divide|placeholder|caret';
-const SPACING_ALLOWED = new Set(['0', '1', '1.5', '2', '2.5', '3', '4', '5', '6', '8', '10', '12', '16', '24', '32', '36', '48']);
-const isPrimitive = (file) => file.startsWith('src/components/ui/');
+const SPACING_ALLOWED = new Set([
+  '0',
+  '1',
+  '1.5',
+  '2',
+  '2.5',
+  '3',
+  '4',
+  '5',
+  '6',
+  '8',
+  '10',
+  '12',
+  '16',
+  '24',
+  '32',
+  '36',
+  '48',
+]);
+const isPrimitive = (file: string) => file.startsWith('src/components/ui/');
 
-const lineRules = [
+const lineRules: Rule[] = [
   {
     id: 'color/raw-palette',
     pattern: new RegExp(`(?<![\\w-])(?:${COLOR_UTILS})-(?:(?:${PALETTE})-\\d{2,3}|white|black)(?![\\w-])`, 'g'),
@@ -86,7 +120,7 @@ const lineRules = [
   },
   {
     id: 'style/inline-style',
-    pattern: /style=\{\{(?![^}]*\b(?:animationDelay|transitionDelay)\b)/g,
+    pattern: /(?:style=\{\{|style:\s*\{)(?![^}]*\b(?:animationDelay|transitionDelay)\b)/g,
     message: 'インラインスタイルはアニメーションの遅延（animationDelay / transitionDelay）以外禁止（DESIGN.md §9）',
   },
   {
@@ -107,7 +141,8 @@ const lineRules = [
   },
   {
     id: 'shape/radius',
-    pattern: /(?<![\w-])rounded(?:-(?:t|b|l|r|s|e|tl|tr|bl|br|ss|se|es|ee))?(?:-(?:none|xs|md|lg|xl|2xl|3xl))?(?![\w-])/g,
+    pattern:
+      /(?<![\w-])rounded(?:-(?:t|b|l|r|s|e|tl|tr|bl|br|ss|se|es|ee))?(?:-(?:none|xs|md|lg|xl|2xl|3xl))?(?![\w-])/g,
     message: '角丸は rounded-control / rounded-card / rounded-full（フォーカス用に rounded-sm）のみ（DESIGN.md §7）',
   },
   {
@@ -164,7 +199,7 @@ for (const file of sourceFiles) {
 
 const EMAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
 const EMAIL_ALLOWED = /@(?:users\.noreply\.github\.com|anthropic\.com)$|^noreply@|^git@github\.com$/;
-const privacyRules = [
+const privacyRules: Omit<Rule, 'message'>[] = [
   { id: 'privacy/email', pattern: EMAIL, test: (m) => !EMAIL_ALLOWED.test(m[0]) },
   { id: 'privacy/mailto-tel', pattern: /\b(?:mailto|tel):/g },
   { id: 'privacy/phone', pattern: /(?:\+81[\s-]?\d{1,4}|(?<![\w-])0\d{1,4})-\d{1,4}-\d{3,4}(?!\d)/g },
@@ -178,7 +213,12 @@ for (const file of textFiles) {
       for (const rule of privacyRules) {
         for (const match of text.matchAll(rule.pattern)) {
           if (rule.test && !rule.test(match)) continue;
-          report(file, index + 1, rule.id, `個人の連絡先（メール・電話番号・連絡用リンク）はリポジトリに置かない（AGENTS.md）— "${match[0]}"`);
+          report(
+            file,
+            index + 1,
+            rule.id,
+            `個人の連絡先（メール・電話番号・連絡用リンク）はリポジトリに置かない（AGENTS.md）— "${match[0]}"`,
+          );
         }
       }
     });
@@ -188,68 +228,85 @@ for (const file of textFiles) {
 // Structural checks
 // ---------------------------------------------------------------------------
 
-// Every color token exists in both themes and is exposed through tailwind.config.js.
+// Every color token exists in both themes and is exposed through tailwind.config.ts.
 {
   const css = read('src/app/globals.css');
-  const block = (selector) => {
+  const block = (selector: string) => {
     const start = css.indexOf('{', css.indexOf(selector));
     return new Set([...css.slice(start, css.indexOf('}', start)).matchAll(/--color-([a-z-]+):/g)].map((m) => m[1]));
   };
   const light = block(':root');
   const dark = block("[data-theme='dark']");
-  for (const name of light) if (!dark.has(name)) report('src/app/globals.css', 0, 'token/theme-parity', `--color-${name} がダークテーマにない`);
-  for (const name of dark) if (!light.has(name)) report('src/app/globals.css', 0, 'token/theme-parity', `--color-${name} がライトテーマにない`);
+  for (const name of light)
+    if (!dark.has(name)) report('src/app/globals.css', 0, 'token/theme-parity', `--color-${name} がダークテーマにない`);
+  for (const name of dark)
+    if (!light.has(name))
+      report('src/app/globals.css', 0, 'token/theme-parity', `--color-${name} がライトテーマにない`);
 
-  const config = read('tailwind.config.js');
+  const config = read('tailwind.config.ts');
   const exposed = new Set([...config.matchAll(/color\('([a-z-]+)'\)/g)].map((m) => m[1]));
   for (const name of light) {
     if (name !== 'shadow' && !exposed.has(name)) {
-      report('tailwind.config.js', 0, 'token/unexposed', `--color-${name} が tailwind.config.js の colors に登録されていない`);
+      report(
+        'tailwind.config.ts',
+        0,
+        'token/unexposed',
+        `--color-${name} が tailwind.config.ts の colors に登録されていない`,
+      );
     }
   }
   for (const name of exposed) {
-    if (!light.has(name)) report('tailwind.config.js', 0, 'token/undefined', `color('${name}') に対応する --color-${name} が globals.css にない`);
+    if (!light.has(name))
+      report(
+        'tailwind.config.ts',
+        0,
+        'token/undefined',
+        `color('${name}') に対応する --color-${name} が globals.css にない`,
+      );
   }
 }
 
 // English and Japanese copy have the same shape.
 {
-  const tmp = path.join(os.tmpdir(), `site-content-${process.pid}.mjs`);
-  fs.copyFileSync(path.join(root, 'src/content/site.js'), tmp);
-  try {
-    const { translations } = await import(pathToFileURL(tmp).href);
-    const shape = (value, at, other, otherAt) => {
-      if (Array.isArray(value)) {
-        if (!Array.isArray(other)) return report('src/content/site.js', 0, 'i18n/parity', `${otherAt} が配列ではない`);
-        const objects = value.some((item) => item && typeof item === 'object');
-        if (objects && value.length !== other.length) {
-          report('src/content/site.js', 0, 'i18n/parity', `${at} (${value.length}) と ${otherAt} (${other.length}) の件数が違う`);
-        }
-        if (objects) value.forEach((item, i) => other[i] && shape(item, `${at}[${i}]`, other[i], `${otherAt}[${i}]`));
-        return;
+  const isObject = (value: unknown): value is Record<string, unknown> =>
+    value !== null && typeof value === 'object' && !Array.isArray(value);
+
+  const shape = (value: unknown, at: string, other: unknown, otherAt: string): void => {
+    if (Array.isArray(value)) {
+      if (!Array.isArray(other)) return report('src/content/site.ts', 0, 'i18n/parity', `${otherAt} が配列ではない`);
+      const objects = value.some(isObject);
+      if (objects && value.length !== other.length) {
+        report(
+          'src/content/site.ts',
+          0,
+          'i18n/parity',
+          `${at} (${value.length}) と ${otherAt} (${other.length}) の件数が違う`,
+        );
       }
-      if (value && typeof value === 'object') {
-        for (const key of Object.keys(value)) {
-          if (!(key in (other ?? {}))) report('src/content/site.js', 0, 'i18n/parity', `${otherAt}.${key} がない`);
-          else shape(value[key], `${at}.${key}`, other[key], `${otherAt}.${key}`);
-        }
-        return;
+      if (objects) value.forEach((item: unknown, i) => shape(item, `${at}[${i}]`, other[i], `${otherAt}[${i}]`));
+      return;
+    }
+    if (isObject(value)) {
+      for (const key of Object.keys(value)) {
+        if (!isObject(other) || !(key in other))
+          report('src/content/site.ts', 0, 'i18n/parity', `${otherAt}.${key} がない`);
+        else shape(value[key], `${at}.${key}`, other[key], `${otherAt}.${key}`);
       }
-      if (typeof value === 'string' && value.trim() === '') report('src/content/site.js', 0, 'i18n/empty', `${at} が空文字`);
-    };
-    shape(translations.en, 'en', translations.ja, 'ja');
-    shape(translations.ja, 'ja', translations.en, 'en');
-  } finally {
-    fs.rmSync(tmp, { force: true });
-  }
+      return;
+    }
+    if (typeof value === 'string' && value.trim() === '')
+      report('src/content/site.ts', 0, 'i18n/empty', `${at} が空文字`);
+  };
+  shape(translations.en, 'en', translations.ja, 'ja');
+  shape(translations.ja, 'ja', translations.en, 'en');
 }
 
 // The site must stay out of search engines.
-if (!/robots:\s*\{[\s\S]*?index:\s*false/.test(read('src/app/layout.js'))) {
-  report('src/app/layout.js', 0, 'publish/noindex', 'metadata.robots の index: false を消さない（AGENTS.md）');
+if (!/robots:\s*\{[\s\S]*?index:\s*false/.test(read('src/app/layout.tsx'))) {
+  report('src/app/layout.tsx', 0, 'publish/noindex', 'metadata.robots の index: false を消さない（AGENTS.md）');
 }
-if (!/X-Robots-Tag[\s\S]*?noindex/.test(read('next.config.js'))) {
-  report('next.config.js', 0, 'publish/noindex', 'X-Robots-Tag: noindex ヘッダーを消さない（AGENTS.md）');
+if (!/X-Robots-Tag[\s\S]*?noindex/.test(read('next.config.ts'))) {
+  report('next.config.ts', 0, 'publish/noindex', 'X-Robots-Tag: noindex ヘッダーを消さない（AGENTS.md）');
 }
 
 // ---------------------------------------------------------------------------

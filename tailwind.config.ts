@@ -1,11 +1,11 @@
-/** @type {import('tailwindcss').Config} */
+import type { Config } from 'tailwindcss';
 
 // Color values live in src/app/globals.css (per theme); this file exposes them as utilities
 // and defines the rest of the design system: type scale, radii, shadows and motion.
-const color = (name) => `rgb(var(--color-${name}) / <alpha-value>)`;
+const color = (name: string) => `rgb(var(--color-${name}) / <alpha-value>)`;
 
-module.exports = {
-  content: ['./src/**/*.{js,jsx,ts,tsx}'],
+export default {
+  content: ['./src/**/*.{ts,tsx}'],
   theme: {
     extend: {
       colors: {
@@ -51,4 +51,4 @@ module.exports = {
     },
   },
   plugins: [],
-};
+} satisfies Config;

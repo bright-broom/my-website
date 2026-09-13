@@ -1,3 +1,11 @@
+import type { SiteProps, Theme } from '@/content/site';
+
+type HeaderProps = SiteProps & {
+  theme: Theme;
+  onToggleTheme: () => void;
+  onToggleLanguage: () => void;
+};
+
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSun, faMoon, faXmark, faBars } from '@fortawesome/free-solid-svg-icons';
@@ -5,7 +13,7 @@ import { Container, IconButton, TextLink, focusRing } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { navItems } from '@/content/site';
 
-function Toggles({ t, theme, onToggleTheme, onToggleLanguage }) {
+function Toggles({ t, theme, onToggleTheme, onToggleLanguage }: HeaderProps) {
   return (
     <div className="flex items-center gap-1">
       <IconButton onClick={onToggleLanguage} className="font-mono text-label">
@@ -18,7 +26,7 @@ function Toggles({ t, theme, onToggleTheme, onToggleLanguage }) {
   );
 }
 
-export function Header({ t, ...toggleProps }) {
+export function Header({ t, ...toggleProps }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 

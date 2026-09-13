@@ -1,8 +1,9 @@
+import type { SiteProps } from '@/content/site';
 import { Button, Card, Eyebrow, Input, Reveal, Section, TextLink, Textarea } from '@/components/ui';
 import { profileLinks } from '@/content/site';
 import { SectionIntro } from './SectionIntro';
 
-export function Contact({ t }) {
+export function Contact({ t }: SiteProps) {
   const { contact } = t;
   const details = [
     { label: contact.locationLabel, value: contact.location },

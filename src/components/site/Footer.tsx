@@ -1,10 +1,11 @@
+import type { SiteProps } from '@/content/site';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { Container, IconLink, TextLink } from '@/components/ui';
 import { profileLinks } from '@/content/site';
 import { profileIcons } from './icons';
 
-export function Footer({ t }) {
+export function Footer({ t }: SiteProps) {
   return (
     <footer className="border-t border-border">
       <Container className="flex flex-col-reverse items-center justify-between gap-6 py-10 sm:flex-row">

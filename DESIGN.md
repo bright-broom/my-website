@@ -1,6 +1,6 @@
 # Design Guide — Toshiki Sakuta Web
 
-> **Design System v1.0.1**（2026-09-11 制定）
+> **Design System v1.0.2**（2026-09-11 制定）
 > このリポジトリの見た目と操作感を、誰が（どの AI が）実装しても同じ品質で再現するための教科書。
 > UI に触る変更をする前に、必ずこのファイルを読むこと。
 
@@ -42,10 +42,10 @@
 
 | 優先 | 対象 | 役割 |
 |---|---|---|
-| 1 | `src/app/globals.css` / `tailwind.config.js` | トークンの**値**の正 |
+| 1 | `src/app/globals.css` / `tailwind.config.ts` | トークンの**値**の正 |
 | 2 | `src/components/ui/*` | コンポーネントの**見た目と振る舞い**の正 |
 | 3 | `DESIGN.md`（このファイル） | **使い方・理由・判断基準**の正 |
-| 4 | `scripts/check-design.mjs` | 1〜3 のうち機械で判定できるルールの強制 |
+| 4 | `scripts/check-design.ts` | 1〜3 のうち機械で判定できるルールの強制 |
 
 コードと DESIGN.md が食い違っていたら、それはバグ。どちらが意図通りか判断し、**同じコミットで両方を揃える**。
 
@@ -85,23 +85,23 @@
 
 ```
 トークン            src/app/globals.css        色（テーマ別の値）・ベーススタイル
-                    tailwind.config.js         トークンをユーティリティとして公開＋文字・角丸・影・動き
+                    tailwind.config.ts         トークンをユーティリティとして公開＋文字・角丸・影・動き
    ↓
 プリミティブ        src/components/ui/*        見た目のルールを持つ唯一の場所
    ↓
 セクション          src/components/site/*      プリミティブを並べるだけ（配置のクラスは可）
    ↓
-ページ              src/app/page.jsx           セクションの並び・テーマ/言語の状態
+ページ              src/app/page.tsx           セクションの並び・テーマ/言語の状態
 
-コンテンツ          src/content/site.js        すべての文言・リンク（en / ja）
-ユーティリティ      src/lib/cn.js              クラス名の結合
+コンテンツ          src/content/site.ts        すべての文言・リンク（en / ja）
+ユーティリティ      src/lib/cn.ts              クラス名の結合
 ```
 
 ### 2.2 依存の向き（逆向きは禁止）
 
 - `ui` は `site` / `content` を import しない
 - `site` は `ui` を `@/components/ui` から import する（個別ファイルを直接 import しない）
-- 文言は `content/site.js` からだけ受け取る（コンポーネントに文字列を直書きしない）
+- 文言は `content/site.ts` からだけ受け取る（コンポーネントに文字列を直書きしない）
 
 ### 2.3 セクションに書いてよいクラス / いけないクラス
 
@@ -165,7 +165,7 @@
 ### 3.4 色を追加・変更する手順
 
 1. `globals.css` の `:root` と `[data-theme='dark']` の**両方**に `--color-名前: R G B;` を追加する（`#` ではなくスペース区切りの RGB）
-2. `tailwind.config.js` の `colors` に `color('名前')` で登録する
+2. `tailwind.config.ts` の `colors` に `color('名前')` で登録する
 3. 両テーマで §3.2 の基準を満たすか計算する
 4. §3.1 の表を更新し、§22 の変更履歴に追記する
 5. `npm run check:design` を通す（両テーマに揃っているか、登録漏れがないかを検出する）
@@ -178,13 +178,15 @@
 
 ### 4.1 フォント
 
-`src/app/layout.js` で `next/font/google` から読み込み、CSS 変数で渡している。
+`src/app/layout.tsx` で `next/font/google` から読み込み、CSS 変数で渡している。
 
 | 役割 | フォント | 変数 | クラス | 用途 |
 |---|---|---|---|---|
 | 欧文 | Inter | `--font-sans` | `font-sans`（既定） | 全体 |
 | 和文 | Noto Sans JP（400 / 500 / 600） | `--font-jp` | `font-sans` のフォールバック | 日本語の文字だけ自動で切り替わる |
 | 等幅 | JetBrains Mono | `--font-mono` | `font-mono` | Eyebrow、連番、ターミナル、言語切り替え |
+
+`next/font` の自動フォールバック補正は無効にし、`globals.css` の 3 つの `@font-face` で従来の Arial 補正値を固定する。Next.js 更新で矢印などの代替字形や後続文字の位置が変わるのを防ぐため。
 
 フォントを追加・変更するときは、欧文と和文のバランス（x ハイトと太さ）を両言語の画面で確認する。
 
@@ -224,7 +226,7 @@
 - `word-break: auto-phrase`（文節で改行）、`line-break: strict`（行頭禁則）
 - 見出しは `text-wrap: balance`、段落は `text-wrap: pretty`
 
-`<html lang>` は言語切り替えに合わせて `page.jsx` が更新する。**この仕組みを壊すと日本語の組版がすべて崩れる。**
+`<html lang>` は言語切り替えに合わせて `page.tsx` が更新する。**この仕組みを壊すと日本語の組版がすべて崩れる。**
 
 ### 4.5 Eyebrow（等幅の小ラベル）
 
@@ -382,7 +384,7 @@ Tailwind 標準の値をモバイルファーストで使う。`xl` 以上は使
 | `animate-fade-up` | 900ms、12px 下からフェードイン | ヒーローの初回表示 |
 | `ease-out-expo` | `cubic-bezier(0.16, 1, 0.3, 1)` | 位置が動くものすべて（最初速く、最後ゆっくり） |
 
-これ以外の duration やイージング、キーフレームを追加しない。追加が必要なら `tailwind.config.js` に名前付きで定義し、この表と §21 を更新する。
+これ以外の duration やイージング、キーフレームを追加しない。追加が必要なら `tailwind.config.ts` に名前付きで定義し、この表と §21 を更新する。
 
 ### 9.2 振り付け
 
@@ -410,8 +412,8 @@ Tailwind 標準の値をモバイルファーストで使う。`xl` 以上は使
 - **Font Awesome だけを使う**（`@fortawesome/free-solid-svg-icons` / `free-brands-svg-icons`）。他のアイコンライブラリや絵文字をアイコンとして使わない
 - サイズは親の文字サイズで決まる（1em）。アイコンリンクは `text-lg`、ボタン内は `text-sm`、小さい矢印は `text-xs`
 - 色は親の文字色を継承させる（アイコンだけに色を付けない）。例外はカードの矢印の hover（`group-hover:text-accent`）
-- **アイコンだけのボタン / リンクには必ず `aria-label`** を付ける。文言は `content/site.js` から渡す
-- プロフィール系アイコンは `src/components/site/icons.js` の `profileIcons` に集約する
+- **アイコンだけのボタン / リンクには必ず `aria-label`** を付ける。文言は `content/site.ts` から渡す
+- プロフィール系アイコンは `src/components/site/icons.ts` の `profileIcons` に集約する
 - 方向を表す矢印は `faArrowRight` を回転させて使う（↗ = `-rotate-45`）
 
 ---
@@ -420,9 +422,9 @@ Tailwind 標準の値をモバイルファーストで使う。`xl` 以上は使
 
 ### 11.1 仕組み
 
-1. `layout.js` の `<head>` 内スクリプトが、**描画前に** `<html data-theme="light|dark">` を設定する（保存値 → なければ OS 設定）。これで読み込み時のちらつきを防いでいる
+1. `layout.tsx` の `<head>` 内スクリプトが、**描画前に** `<html data-theme="light|dark">` を設定する（保存値 → なければ OS 設定）。これで読み込み時のちらつきを防いでいる
 2. `globals.css` が `[data-theme='dark']` のときにトークンの値を差し替える
-3. 切り替えボタンは `page.jsx` の `toggleTheme` が `data-theme` と `localStorage.theme` を更新する
+3. 切り替えボタンは `page.tsx` の `toggleTheme` が `data-theme` と `localStorage.theme` を更新する
 
 言語も同様に `localStorage.language` に保存し、`<html lang>` を更新する。
 
@@ -454,7 +456,7 @@ Tailwind 標準の値をモバイルファーストで使う。`xl` 以上は使
 - ページ内移動や外部リンクは `as="a"` で `href` を渡す
 - アイコンは文字の後ろに `text-sm` で置く（`gap-2` は組み込み済み）
 
-```jsx
+```tsx
 <Button as="a" href="#works" size="lg">
   {t.hero.primaryAction}
   <FontAwesomeIcon icon={faArrowRight} className="text-sm" />
@@ -541,7 +543,7 @@ Tailwind 標準の値をモバイルファーストで使う。`xl` 以上は使
 | パーツ | 役割 |
 |---|---|
 | `SectionIntro` | Eyebrow ＋ 見出し ＋（任意で）リード文。**すべてのセクションの冒頭はこれで始める** |
-| `icons.js` | プロフィールリンク用アイコンの対応表 |
+| `icons.ts` | プロフィールリンク用アイコンの対応表 |
 
 ---
 
@@ -549,7 +551,7 @@ Tailwind 標準の値をモバイルファーストで使う。`xl` 以上は使
 
 新しいセクションはこの型から始める。
 
-```jsx
+```tsx
 import { Reveal, Section } from '@/components/ui';
 import { SectionIntro } from './SectionIntro';
 
@@ -574,9 +576,9 @@ export function Example({ t }) {
 
 追加するときに一緒にやること:
 
-1. `content/site.js` の `en` と `ja` の両方に `example: { eyebrow: '04 / Example', heading: … }` を追加する
+1. `content/site.ts` の `en` と `ja` の両方に `example: { eyebrow: '04 / Example', heading: … }` を追加する
 2. ナビに出すなら `navItems` と両言語の `nav` に追加する
-3. `page.jsx` の `<main>` に並べ、§6.4 の交互ルールに合わせて全セクションの `tone` を見直す
+3. `page.tsx` の `<main>` に並べ、§6.4 の交互ルールに合わせて全セクションの `tone` を見直す
 4. 以降のセクションの Eyebrow の連番を振り直す
 
 ---
@@ -585,7 +587,7 @@ export function Example({ t }) {
 
 ### 14.1 置き場所
 
-- **表示される文字列はすべて `src/content/site.js`**。コンポーネントに直書きしない（`aria-label` の文言も含む）
+- **表示される文字列はすべて `src/content/site.ts`**。コンポーネントに直書きしない（`aria-label` の文言も含む）
 - 例外: 固有名詞として翻訳しないもの（ワードマーク `Toshiki Sakuta`、ターミナル内のコマンド）
 - `translations.en` と `translations.ja` は**同じキー構造**にする（§16 で検出）
 - 言語に依存しないデータ（リンク URL など）は `translations` の外に置く（例: `profileLinks`）
@@ -626,15 +628,17 @@ export function Example({ t }) {
 ## 16. 自動チェック
 
 ```bash
-npm run check:design
+npm run check          # 型・デザイン・未使用コード
+npm run test:behavior  # 言語・テーマ・メニューなどの操作
 ```
 
-`scripts/check-design.mjs` が次を検出し、1 件でもあれば失敗する。GitHub Actions（`.github/workflows/design-check.yml`）でも push と PR のたびに実行される。
+`scripts/check-design.ts` が次を検出し、1 件でもあれば失敗する。GitHub Actions（`.github/workflows/design-check.yml`）でも push と PR のたびに実行される。
 
 | ルール ID | 検出内容 |
 |---|---|
+| `source/typescript` | JavaScript ファイルの再追加（生成物・依存は対象外） |
 | `color/raw-palette` | `bg-blue-600`、`text-white` などのパレット色 |
-| `color/literal` | JS 内の `'#fff'`、`rgb()` などの色の直書き |
+| `color/literal` | TypeScript 内の `'#fff'`、`rgb()` などの色の直書き |
 | `style/dark-variant` | `dark:` バリアント |
 | `style/arbitrary-value` | `p-[13px]` などの任意値（`grid-cols-[...]` は除く） |
 | `style/inline-style` | 遅延指定以外の `style={{ }}` |
@@ -649,7 +653,7 @@ npm run check:design
 | `layout/z-index` | `z-10` / `z-20` 以外 |
 | `icon/library` | Font Awesome 以外のアイコンライブラリ |
 | `privacy/*` | メールアドレス、電話番号、メール・電話の連絡用リンク（リポジトリ全体） |
-| `token/*` | 色トークンの両テーマの揃い、`tailwind.config.js` への登録漏れ |
+| `token/*` | 色トークンの両テーマの揃い、`tailwind.config.ts` への登録漏れ |
 | `i18n/*` | `en` と `ja` のキー構造の不一致、空文字 |
 | `publish/noindex` | 検索除外設定（`robots` と `X-Robots-Tag`）の削除 |
 
@@ -670,7 +674,7 @@ npm run check:design
   │    例: 危険な操作のボタン → Button に variant を追加
   │
   ├─ 2 か所以上で使う、新しい見た目の部品？ ─────────── はい → src/components/ui に新規作成
-  │                                                         index.js に export、§12 に追記
+  │                                                         index.ts に export、§12 に追記
   │
   └─ そのセクションでしか使わない構造？ ─────────────── はい → src/components/site に作る
                                                             （見た目は既存トークンとプリミティブで）
@@ -734,7 +738,7 @@ UI に関わる変更は、コミット前にすべて確認する。
 - [ ] 動きを減らす設定で、アニメーションが止まる
 
 **コンテンツ**
-- [ ] 文言は `content/site.js` にあり、`en` と `ja` の両方がある
+- [ ] 文言は `content/site.ts` にあり、`en` と `ja` の両方がある
 - [ ] 個人の連絡先（メール・電話番号・詳しい住所）を追加していない
 
 **ドキュメント**
@@ -752,8 +756,7 @@ UI に関わる変更は、コミット前にすべて確認する。
 | 無効状態 | §8 の通り未定義 | 必要になった時点でプリミティブに追加 |
 | お問い合わせフォーム | 送信処理がない | 送信先を決めて実装する。個人アドレスをコードに書かない方法で（外部フォームサービス、サーバー側の環境変数など） |
 | 実績カードのリンク先 | `/web-development` などのページが存在せず 404 | ページを作るか、リンクを外す |
-| 状態の置き場所 | テーマと言語の状態が `page.jsx` にあり、ページが増えると共有できない | 2 ページ目を作る時点で Context（Provider）に移し、`layout.js` で包む |
-| Next.js のバージョン | 14.0.4 で、`npm audit` に既知の脆弱性がある | 上げる。上げる前後で `npm run test:visual` の差分がゼロであることを確認する |
+| 状態の置き場所 | テーマと言語の状態が `page.tsx` にあり、ページが増えると共有できない | 2 ページ目を作る時点で Context（Provider）に移し、`layout.tsx` で包む |
 
 ---
 
@@ -767,11 +770,12 @@ UI に関わる変更は、コミット前にすべて確認する。
 | D-002 | 2026-09-11 | アクセントは朱色（ライト `#C43A1E` / ダーク `#FF7448`） | 日本のエンジニアとしての個性。青系の技術サイトの中で埋もれない。白と黒どちらの地でも AA を満たす |
 | D-003 | 2026-09-11 | 中間色は stone（温かみのあるグレー） | 冷たいグレーより朱色と馴染み、紙のような落ち着きが出る |
 | D-004 | 2026-09-11 | 等幅フォントの Eyebrow とターミナルをモチーフにする | クラウド / セキュリティのエンジニアであることを、説明ではなく見た目で伝えるため |
-| D-005 | 2026-09-11 | 色は CSS 変数（RGB チャンネル）、それ以外は `tailwind.config.js` に集約 | テーマ切り替えを `data-theme` だけで完結させ、`dark:` の分岐をなくすため。RGB チャンネルにしたのは `/85` などの透明度指定を使えるようにするため |
+| D-005 | 2026-09-11 | 色は CSS 変数（RGB チャンネル）、それ以外は `tailwind.config.ts` に集約 | テーマ切り替えを `data-theme` だけで完結させ、`dark:` の分岐をなくすため。RGB チャンネルにしたのは `/85` などの透明度指定を使えるようにするため |
 | D-006 | 2026-09-11 | テーマの初期値は OS 設定、切り替えは保存し、描画前のスクリプトで適用 | 読み込み時のちらつき（白 → 黒）を防ぐため |
 | D-007 | 2026-09-11 | 影は `shadow-card` 1 種類、2 か所だけ | フラットさを保ち、「浮いているもの」の意味を薄めないため |
 | D-008 | 2026-09-11 | ルールをスクリプトで強制し、CI でも実行する | 実装者（人・AI）が変わっても再現性を保つには、文書だけでは不十分なため |
 | D-009 | 2026-09-11 | 個人の連絡先をリポジトリに置かない。サイトは検索エンジンに載せない | 公開範囲をコントロールするため。過去に履歴から削除した経緯がある |
+| D-010 | 2026-09-13 | TypeScript 移行に伴い Next.js 15 / React 19 に更新し、フォールバックフォントの補正値は従来値で固定 | 設定ファイルまで型検査し、フレームワーク更新による文字位置の変化を防ぐため |
 
 ---
 
@@ -793,5 +797,6 @@ MAJOR の変更は、変える前に §21 に理由を書き、画面の比較�
 
 | バージョン | 日付 | 内容 |
 |---|---|---|
+| 1.0.2 | 2026-09-13 | TypeScript 化、型・未使用コード・操作の検査を追加。旧設定と一時ファイル処理を整理し、フォールバックフォントの補正値を固定 |
 | 1.0.1 | 2026-09-11 | 見た目の比較テスト（`npm run test:visual`）をチェックリストに追加 |
 | 1.0.0 | 2026-09-11 | 初版。トークン、UI プリミティブ（§12）、セクションパターン、自動チェックを制定 |

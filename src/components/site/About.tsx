@@ -1,7 +1,8 @@
+import type { SiteProps } from '@/content/site';
 import { Eyebrow, Reveal, Section, Tag } from '@/components/ui';
 import { SectionIntro } from './SectionIntro';
 
-export function About({ t }) {
+export function About({ t }: SiteProps) {
   const { about } = t;
 
   return (

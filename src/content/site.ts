@@ -1,81 +1,89 @@
-export const navItems = ['about', 'works', 'contact'];
+export const navItems = ['about', 'works', 'contact'] as const;
+
+export type Language = 'en' | 'ja';
+export type Theme = 'light' | 'dark';
 
 export const profileLinks = [
   { name: 'LinkedIn', icon: 'linkedin', href: 'https://www.linkedin.com/in/toshikisakuta/' },
   { name: 'GitHub', icon: 'github', href: 'https://github.com/bright-broom' },
-];
+] as const;
 
-export const translations = {
-  en: {
-    nav: { about: 'About', works: 'Works', contact: 'Contact' },
-    switchLanguage: '日本語',
-    toggleTheme: 'Toggle color theme',
-    toggleMenu: 'Toggle menu',
-    hero: {
-      eyebrow: 'Cloud & Security Engineer · Tokyo, Japan',
-      name: 'Toshiki Sakuta',
-      lead: 'I build and secure infrastructure — from Azure cloud environments and networks to vulnerability assessment through log analysis.',
-      primaryAction: 'View works',
-      secondaryAction: 'Get in touch',
-    },
-    about: {
-      eyebrow: '01 / About',
-      heading: 'About me',
-      paragraphs: [
-        'An engineer from Hyogo Prefecture, I became fascinated with the world of the Web when a friend enjoyed a website I created as a hobby in the days before the iPhone was introduced to the world. I studied information technology at a technical high school and majored in industrial design at university. After graduation, I was involved in the design of electronic circuits for automobiles, and later moved to the IT industry, attracted by the potential of cloud technology.',
-        'I started my career in technical support and experienced a wide range of work from networking to security measures, including Azure cloud server construction, security measures, and vulnerability diagnosis through log analysis.',
-      ],
-      skillsLabel: 'Focus',
-      skills: ['Microsoft Azure', 'Networking', 'Security', 'Log analysis', 'Web development'],
-      timelineLabel: 'Path',
-      timeline: [
-        { label: 'Technical high school', text: 'Information technology' },
-        { label: 'University', text: 'Industrial design' },
-        { label: 'Automotive', text: 'Electronic circuit design' },
-        { label: 'IT industry', text: 'Technical support → cloud, network & security' },
-      ],
-    },
-    works: {
-      eyebrow: '02 / Works',
-      heading: 'Works',
-      viewProject: 'View project',
-      projects: [
-        {
-          title: 'Web Development',
-          description: 'Designing and building websites and web applications, from interface to deployment.',
-          url: '/web-development',
-        },
-        {
-          title: 'Cloud Solutions',
-          description: 'Building and operating cloud environments centered on Microsoft Azure.',
-          url: '/cloud-solutions',
-        },
-        {
-          title: 'Security Analysis',
-          description: 'Security hardening and vulnerability assessment through log analysis.',
-          url: '/security-analysis',
-        },
-      ],
-    },
-    contact: {
-      eyebrow: '03 / Contact',
-      heading: 'Get in touch',
-      lead: 'For work inquiries, collaborations, or just to say hello — feel free to reach out.',
-      locationLabel: 'Location',
-      location: 'Tokyo, Japan',
-      linksLabel: 'Links',
-      form: {
-        name: 'Name',
-        email: 'Email',
-        message: 'Message',
-        submit: 'Send message',
+const english = {
+  nav: { about: 'About', works: 'Works', contact: 'Contact' },
+  switchLanguage: '日本語',
+  toggleTheme: 'Toggle color theme',
+  toggleMenu: 'Toggle menu',
+  hero: {
+    eyebrow: 'Cloud & Security Engineer · Tokyo, Japan',
+    name: 'Toshiki Sakuta',
+    lead: 'I build and secure infrastructure — from Azure cloud environments and networks to vulnerability assessment through log analysis.',
+    primaryAction: 'View works',
+    secondaryAction: 'Get in touch',
+  },
+  about: {
+    eyebrow: '01 / About',
+    heading: 'About me',
+    paragraphs: [
+      'An engineer from Hyogo Prefecture, I became fascinated with the world of the Web when a friend enjoyed a website I created as a hobby in the days before the iPhone was introduced to the world. I studied information technology at a technical high school and majored in industrial design at university. After graduation, I was involved in the design of electronic circuits for automobiles, and later moved to the IT industry, attracted by the potential of cloud technology.',
+      'I started my career in technical support and experienced a wide range of work from networking to security measures, including Azure cloud server construction, security measures, and vulnerability diagnosis through log analysis.',
+    ],
+    skillsLabel: 'Focus',
+    skills: ['Microsoft Azure', 'Networking', 'Security', 'Log analysis', 'Web development'],
+    timelineLabel: 'Path',
+    timeline: [
+      { label: 'Technical high school', text: 'Information technology' },
+      { label: 'University', text: 'Industrial design' },
+      { label: 'Automotive', text: 'Electronic circuit design' },
+      { label: 'IT industry', text: 'Technical support → cloud, network & security' },
+    ],
+  },
+  works: {
+    eyebrow: '02 / Works',
+    heading: 'Works',
+    viewProject: 'View project',
+    projects: [
+      {
+        title: 'Web Development',
+        description: 'Designing and building websites and web applications, from interface to deployment.',
+        url: '/web-development',
       },
-    },
-    footer: {
-      copyright: '© 2024 Toshiki Sakuta',
-      backToTop: 'Back to top',
+      {
+        title: 'Cloud Solutions',
+        description: 'Building and operating cloud environments centered on Microsoft Azure.',
+        url: '/cloud-solutions',
+      },
+      {
+        title: 'Security Analysis',
+        description: 'Security hardening and vulnerability assessment through log analysis.',
+        url: '/security-analysis',
+      },
+    ],
+  },
+  contact: {
+    eyebrow: '03 / Contact',
+    heading: 'Get in touch',
+    lead: 'For work inquiries, collaborations, or just to say hello — feel free to reach out.',
+    locationLabel: 'Location',
+    location: 'Tokyo, Japan',
+    linksLabel: 'Links',
+    form: {
+      name: 'Name',
+      email: 'Email',
+      message: 'Message',
+      submit: 'Send message',
     },
   },
+  footer: {
+    copyright: '© 2024 Toshiki Sakuta',
+    backToTop: 'Back to top',
+  },
+};
+
+export type SiteContent = typeof english;
+export type SiteProps = { t: SiteContent };
+
+export const translations: Record<Language, SiteContent> = {
+  en: english,
   ja: {
     nav: { about: 'プロフィール', works: '実績', contact: 'お問い合わせ' },
     switchLanguage: 'English',

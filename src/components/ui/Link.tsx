@@ -1,3 +1,4 @@
+import type { ComponentPropsWithoutRef } from 'react';
 import { cn } from '@/lib/cn';
 import { focusRing } from './Button';
 
@@ -8,7 +9,11 @@ const textVariants = {
   inline: 'text-fg underline decoration-border-strong underline-offset-4 hover:decoration-accent',
 };
 
-export function TextLink({ variant = 'subtle', className, ...props }) {
+export function TextLink({
+  variant = 'subtle',
+  className,
+  ...props
+}: ComponentPropsWithoutRef<'a'> & { variant?: keyof typeof textVariants }) {
   return (
     <a
       className={cn('rounded-sm transition-colors duration-200', focusRing, textVariants[variant], className)}
@@ -17,7 +22,11 @@ export function TextLink({ variant = 'subtle', className, ...props }) {
   );
 }
 
-export function IconLink({ external = false, className, ...props }) {
+export function IconLink({
+  external = false,
+  className,
+  ...props
+}: ComponentPropsWithoutRef<'a'> & { external?: boolean }) {
   return (
     <a
       className={cn(
